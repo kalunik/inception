@@ -7,5 +7,8 @@ RUN     apk add --no-cache wget php7-common php7-session php7-iconv php7-json\
 
 RUN     mkdir -p /var/www/webapps/
 
-RUN     cd /usr/share/webapps/
-RUN     wget http://wordpress.org/6.1.1.tar.gz
+RUN     cd /var/www/webapps/
+RUN     wget http://wordpress.org/latest.tar.gz
+RUN	tar -xzvf latest.tar.gz
+RUN	rm latest.tar.gz
+

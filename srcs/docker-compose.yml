@@ -1,49 +1,47 @@
-version: '3'
+version: "3.9"
 services:
-  mysql:
-    image: mariadb
-    volumes:
-      - /home/wjonatho/mysql:/var/lib/mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: mysql_root_pass
-      MYSQL_DATABASE: db_name
-      MYSQL_USER: user_name
-      MYSQL_PASSWORD: user_pass
-    restart: always
 
-servicesr
-  mysql:
-    image: mariadb
-    volumes:
-      - /data/mysql:/var/lib/mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: mysql_root_pass
-      MYSQL_DATABASE: db_name
-      MYSQL_USER: user_name
-      MYSQL_PASSWORD: user_pass
-    restart: always
-  wordpress:
-    image: wordpress:php7.3-fpm-alpine
-    volumes:
-      - /data/html:/var/www/html
-    depends_on:
-      - mysql
-    environment:
-      WORDPRESS_DB_HOST: mysql
-      MYSQL_ROOT_PASSWORD: mysql_root_pass
-      WORDPRESS_DB_NAME: db_name
-      WORDPRESS_DB_USER: user_name
-      WORDPRESS_DB_PASSWORD: user_pass
-      WORDPRESS_TABLE_PREFIX: wp_
-    links:
-      - mysql
-    restart: always
   nginx:
-    image: nginx:alpine
+    build: 
+      context: ./nginx
+        #network: wj_incept
     volumes:
-      - nginx:/etc/nginx/conf.d
-      - /data/html:/var/www/html
-    ports:
-      - 8080:80
-    links:
-      - wordpress
+      - wp-db:/var/www
+    ports:  
+      - 443:443
+    restart: unless-stopped
+
+  mariadb:
+    build:
+      context: ./mariadb
+      args:
+        - MYSQL_ROOT_PASSWORD
+        - MYSQL_USER
+        - MYSQL_PASSWORD
+    env_file: .env
+      #network: wj_incept
+    volumes:
+      - DB:/var/lib/mysql
+    expose:
+      - "3306"
+    restart: unless-stopped
+  
+  wordpress:
+    build:
+      context: ./wordpress
+        #network: wj_incept
+    volumes:
+      - wp-db:/var/www/webapps/data    
+    expose:
+      - "9000"
+    depends_on:
+      - nginx
+      - mariadb
+    restart: unless-stopped
+
+          #networks:
+          #  wj_incept:
+
+volumes:
+  DB:
+  wp-db:
