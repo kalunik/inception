@@ -7,7 +7,7 @@ RUN	openrc && touch /run/openrc/softlevel
 ADD	tools/setup.sh .
 RUN	chmod +x /setup.sh && ls -la 
 RUN	./setup.sh
-RUN	rm setup.sh
+#RUN	rm setup.sh
 
 RUN	openrc -s mariadb start
 
