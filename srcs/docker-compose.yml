@@ -1,14 +1,17 @@
 version: "3.9"
-services:
 
+services:
   nginx:
     build: 
       context: ./nginx
-        #network: wj_incept
+    networks:
+      - wj_incept
     volumes:
       - wp-db:/var/www
     ports:  
       - 443:443
+    depends_on:
+      - wordpress
     restart: unless-stopped
 
   mariadb:
@@ -19,7 +22,8 @@ services:
         - MYSQL_USER
         - MYSQL_PASSWORD
     env_file: .env
-      #network: wj_incept
+    networks:
+      - wj_incept
     volumes:
       - DB:/var/lib/mysql
     expose:
@@ -29,18 +33,19 @@ services:
   wordpress:
     build:
       context: ./wordpress
-        #network: wj_incept
+    networks:
+      - wj_incept
     volumes:
       - wp-db:/var/www/webapps/data    
     expose:
       - "9000"
     depends_on:
-      - nginx
       - mariadb
     restart: unless-stopped
 
-          #networks:
-          #  wj_incept:
+networks:
+  wj_incept:
+    driver: bridge
 
 volumes:
   DB:
