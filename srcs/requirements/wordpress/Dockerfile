@@ -6,9 +6,9 @@ RUN     apk add --no-cache wget php7-common php7-session php7-iconv php7-json\
         php7-ldap php7-ctype php7-dom php7-simplexml php7-redis
 
 RUN     mkdir -p /var/www/webapps/
-
 RUN     cd /var/www/webapps/
 RUN     wget http://wordpress.org/latest.tar.gz
 RUN	tar -xzvf latest.tar.gz
+#ADD	http://wordpress.org/latest.tar.gz .
 RUN	rm latest.tar.gz
 

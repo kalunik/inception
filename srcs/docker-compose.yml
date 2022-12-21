@@ -3,45 +3,48 @@ version: "3.9"
 services:
   nginx:
     build: 
-      context: ./nginx
+      context: ./requirements/nginx
+    container_name: nginx
     networks:
       - wj_incept
     volumes:
-      - wp-db:/var/www
+      - ${HOME}/wp-db:/var/www
     ports:  
       - 443:443
     depends_on:
       - wordpress
-    restart: unless-stopped
+    restart: always 
 
   mariadb:
     build:
-      context: ./mariadb
+      context: ./requirements/mariadb
       args:
         - MYSQL_ROOT_PASSWORD
         - MYSQL_USER
         - MYSQL_PASSWORD
     env_file: .env
+    container_name: mariadb
     networks:
       - wj_incept
     volumes:
-      - DB:/var/lib/mysql
+      - ${HOME}/DB:/var/lib/mysql
     expose:
       - "3306"
-    restart: unless-stopped
+    restart: always
   
   wordpress:
     build:
-      context: ./wordpress
+      context: ./requirements/wordpress
+    container_name: wordpress  
     networks:
       - wj_incept
     volumes:
-      - wp-db:/var/www/webapps/data    
+      - ${HOME}/wp-db:/var/www/webapps/data    
     expose:
       - "9000"
     depends_on:
       - mariadb
-    restart: unless-stopped
+    restart: always
 
 networks:
   wj_incept:
