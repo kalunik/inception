@@ -2,7 +2,7 @@
 
 #cp my.cnf /etc/mysql/
 
-if [ -d /var/lib/mysql/${MYSQL_DATABASE} ] 
+if [ -d /var/lib/mysql/${MYSQL_DATABASE} ]; 
 then
 	echo "Database already exists."
 else

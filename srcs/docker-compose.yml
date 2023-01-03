@@ -19,6 +19,7 @@ services:
     build:
       context: ./requirements/mariadb
       args:
+        - MYSQL_DATABASE
         - MYSQL_ROOT_PASSWORD
         - MYSQL_USER
         - MYSQL_PASSWORD
@@ -35,6 +36,11 @@ services:
   wordpress:
     build:
       context: ./requirements/wordpress
+      args:
+        - MYSQL_DATABASE
+        - MYSQL_USER
+        - MYSQL_PASSWORD
+    env_file: .env
     container_name: wordpress  
     networks:
       - wj_incept
