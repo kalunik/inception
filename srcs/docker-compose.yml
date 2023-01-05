@@ -4,11 +4,12 @@ services:
   nginx:
     build: 
       context: ./requirements/nginx
+    image: nginx
     container_name: nginx
     networks:
       - wj_incept
     volumes:
-      - ${HOME}/wp-db:/var/www
+      - ${HOME}/wp-db:/var/www/wjonatho.42.fr/html
     ports:  
       - 443:443
     depends_on:
@@ -24,6 +25,7 @@ services:
         - MYSQL_USER
         - MYSQL_PASSWORD
     env_file: .env
+    image: mariadb
     container_name: mariadb
     networks:
       - wj_incept
@@ -41,11 +43,12 @@ services:
         - MYSQL_USER
         - MYSQL_PASSWORD
     env_file: .env
+    image: nginx
     container_name: wordpress  
     networks:
       - wj_incept
     volumes:
-      - ${HOME}/wp-db:/var/www/webapps/data    
+      - ${HOME}/wp-db:/var/www/wjonatho.42.fr/html
     expose:
       - "9000"
     depends_on:
