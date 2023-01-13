@@ -14,8 +14,11 @@ else
 	mariadb -u root -e "GRANT ALL PRIVILEGES ON $MYSQL_DATABASE.* TO '$MYSQL_USER'@'%'; "
 	mariadb -u root -e "FLUSH PRIVILEGES;"
 	mariadb -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PASSWORD';"
-	openrc -s mariadb restart
+	#openrc -s mariadb restart
 	openrc -s mariadb stop
 fi
 
-#sed -i 's/skip-networking/# skip-networking/g' /etc/my.cnf.d/mariadb-server.cnf
+sed -i 's/skip-networking/# skip-networking/g' /etc/my.cnf.d/mariadb-server.cnf
+
+mysqld
+

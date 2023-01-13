@@ -5,6 +5,7 @@ RUN     apk add --no-cache openrc wget php7-common php7-fpm php7-session php7-ic
         php7-pdo_mysql php7-soap php7-posix php7-mcrypt php7-gettext\
         php7-ldap php7-ctype php7-redis
 
+RUN	id wpw || adduser -D wpw
 #RUN     mkdir -p /var/www/webapps/
 #RUN     cd /var/www/webapps/
 RUN     wget http://wordpress.org/latest.tar.gz
@@ -12,6 +13,7 @@ RUN	tar -xzvf latest.tar.gz
 #ADD	http://wordpress.org/latest.tar.gz .
 RUN	rm latest.tar.gz
 
+RUN	wp db create --path=./wordpress
 COPY	wp-config.php	wordpress/
 COPY	php-fpm.conf	/etc/php7/php-fpm.d/www.conf
 RUN	echo "<?php echo phpinfo();?>" > wordpress/info.php	
