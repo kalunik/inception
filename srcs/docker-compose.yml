@@ -1,64 +1,81 @@
 version: "3.9"
 
 services:
-  nginx:
-    build: 
-      context: ./requirements/nginx
-    image: nginx
-    container_name: nginx
-    networks:
-      - wj_incept
-    volumes:
-      - ${HOME}/data/wp-db:/var/www/wjonatho.42.fr/html
-    ports:  
-      - 443:443
-    depends_on:
-      - wordpress
-    restart: always 
+    mariadb:
+        build:
+            context: ./requirements/mariadb
+            args:
+                - MYSQL_DATABASE
+                - MYSQL_ROOT_PASSWORD
+                - MYSQL_USER
+                - MYSQL_PASSWORD
+        env_file: .env
+        image: mariadb
+        container_name: mariadb
+        networks:
+            - wj_incept
+        volumes:
+            - data:/var/lib/mysql
+        expose:
+              - '3306'
+        restart: always
 
-  mariadb:
-    build:
-      context: ./requirements/mariadb
-      args:
-        - MYSQL_DATABASE
-        - MYSQL_ROOT_PASSWORD
-        - MYSQL_USER
-        - MYSQL_PASSWORD
-    env_file: .env
-    image: mariadb
-    container_name: mariadb
-    networks:
-      - wj_incept
-    volumes:
-      - ${HOME}/data/DB:/var/lib/mysql
-    expose:
-      - "3306"
-    restart: always
-  
-  wordpress:
-    build:
-      context: ./requirements/wordpress
-      args:
-        - MYSQL_DATABASE
-        - MYSQL_USER
-        - MYSQL_PASSWORD
-    env_file: .env
-    image: wordpress
-    container_name: wordpress  
-    networks:
-      - wj_incept
-    volumes:
-      - ${HOME}/data/wp-db:/var/www/wjonatho.42.fr/html
-    expose:
-      - "9000"
-    depends_on:
-      - mariadb
-    restart: always
+    wordpress:
+        build:
+            context: requirements/wordpress
+            args:
+                - MYSQL_DATABASE
+                - MYSQL_USER
+                - MYSQL_PASSWORD
+        env_file: .env
+        image: wordpress
+        container_name: wordpress
+        networks:
+            - wj_incept
+        volumes:
+            - site:/var/www/html/wordpress/
+        expose:
+              - '9000'
+        depends_on:
+            - mariadb
+        restart: always
+
+    nginx:
+        build:
+            context: ./requirements/nginx
+        image: nginx
+        container_name: nginx
+        networks:
+            - wj_incept
+        volumes:
+            - site:/var/www/html/wordpress
+        ports:
+            - 443:443
+        depends_on:
+            - wordpress
+        restart: always
+
+#    redis:
+#        container_name: redis
+#        build: ./requirements/bonus/redis
+#        restart: always
+#        networks:
+#            - wj_incept
+#        ports:
+#            - 6379:6379
 
 networks:
   wj_incept:
     driver: bridge
 
 volumes:
-  DB:
-  wp-db:
+  data:
+    driver_opts:
+      type: none
+      device: /home/wjonatho/data/maria
+      o: bind
+  site:
+    driver_opts:
+      type: none
+      device: /home/wjonatho/data/wp-ng
+      o: bind

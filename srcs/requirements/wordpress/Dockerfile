@@ -1,23 +1,38 @@
-FROM    alpine:3.15.6
+FROM	alpine:3.12.0
 
-RUN     apk add --no-cache openrc wget php7-common php7-fpm php7-session php7-iconv php7-json\
-        php7-gd php7-mysqli php7-imap php7-cgi fcgi php7-pdo\
-        php7-pdo_mysql php7-soap php7-posix php7-mcrypt php7-gettext\
-        php7-ldap php7-ctype php7-redis
+RUN		apk update
+RUN		apk add mariadb-client\
+		php7 php7-fpm php7-bcmath php7-bz2 php7-calendar\
+		php7-ctype php7-curl php7-dom php7-exif php7-fileinfo\
+		php7-gd php7-gmagick php7-gmp php7-iconv php7-imap\
+		php7-intl php7-json php7-mbstring php7-mcrypt php7-memcache\
+		php7-mysqli php7-mysqlnd php7-openssl php7-pcntl php7-pdo\
+		php7-pdo_mysql php7-phar php7-posix php7-session php7-shmop\
+		php7-simplexml php7-soap php7-sockets php7-sodium\
+		php7-sysvsem php7-sysvshm php7-tokenizer php7-xml\
+		php7-xmlreader php7-xmlwriter php7-xsl php7-zip php7-zlib
 
-RUN	id wpw || adduser -D wpw
-#RUN     mkdir -p /var/www/webapps/
-#RUN     cd /var/www/webapps/
-RUN     wget http://wordpress.org/latest.tar.gz
-RUN	tar -xzvf latest.tar.gz
-#ADD	http://wordpress.org/latest.tar.gz .
-RUN	rm latest.tar.gz
+# Download redis cache and unzip it
+# RUN wget https://downloads.wordpress.org/plugin/redis-cache.2.0.22.zip
+# RUN unzip redis-cache.2.0.22.zip
+# RUN rm -rf redis-cache.2.0.22.zip
 
-RUN	wp db create --path=./wordpress
-COPY	wp-config.php	wordpress/
-COPY	php-fpm.conf	/etc/php7/php-fpm.d/www.conf
-RUN	echo "<?php echo phpinfo();?>" > wordpress/info.php	
+# ADD and COPY Files to container
+# ADD ./conf/object-cache.php /wordpress/wp-content/
+# COPY conf/wp-config.php /wordpress/wp-config.php
 
-RUN     openrc && touch /run/openrc/softlevel
-#RUN	openrc -s php-fpm7 start
-ENTRYPOINT	["php-fpm7", "-FR"]
+RUN		adduser -S nginx && addgroup -S nginx
+
+COPY	conf/www.conf /etc/php7/php-fpm.d
+
+COPY	tools/wp_setup.sh /
+RUN		chmod +x ./wp_setup.sh
+
+RUN		wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+RUN		chmod 777 ./wp-cli.phar && mv ./wp-cli.phar ./usr/bin/wp && mkdir -p /var/www/html/wordpress
+RUN		wp core download --allow-root --path=/var/www/html/wordpress
+COPY	./conf/wp-config.php /var/www/html/wordpress/wp-config.php
+
+COPY	./*.html /var/www/html/wordpress/wp-content
+
+ENTRYPOINT [ "./wp_setup.sh" ]
