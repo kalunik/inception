@@ -1,12 +1,5 @@
 <?php
 
-//define('NONCE_SALT', 'DarkSide77');
-//
-//define('WP_CACHE', true);
-//
-//define('WP_REDIS_HOST', 'redis');
-//define('WP_CACHE_KEY_SALT', 'DOMAIN_NAME');
-
 define( 'DB_NAME', 'DATABASE_NAME' );
 
 /** MySQL database username */
@@ -53,4 +46,3 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 require_once( ABSPATH . 'wp-settings.php' );
-//define('CONCATENATE_SCRIPTS', false);

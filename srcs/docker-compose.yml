@@ -55,15 +55,6 @@ services:
             - wordpress
         restart: always
 
-#    redis:
-#        container_name: redis
-#        build: ./requirements/bonus/redis
-#        restart: always
-#        networks:
-#            - wj_incept
-#        ports:
-#            - 6379:6379
-
 networks:
   wj_incept:
     driver: bridge

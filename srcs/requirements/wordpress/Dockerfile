@@ -12,15 +12,6 @@ RUN		apk add mariadb-client\
 		php7-sysvsem php7-sysvshm php7-tokenizer php7-xml\
 		php7-xmlreader php7-xmlwriter php7-xsl php7-zip php7-zlib
 
-# Download redis cache and unzip it
-# RUN wget https://downloads.wordpress.org/plugin/redis-cache.2.0.22.zip
-# RUN unzip redis-cache.2.0.22.zip
-# RUN rm -rf redis-cache.2.0.22.zip
-
-# ADD and COPY Files to container
-# ADD ./conf/object-cache.php /wordpress/wp-content/
-# COPY conf/wp-config.php /wordpress/wp-config.php
-
 RUN		adduser -S nginx && addgroup -S nginx
 
 COPY	conf/www.conf /etc/php7/php-fpm.d
